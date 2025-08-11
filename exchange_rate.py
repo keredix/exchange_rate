@@ -36,7 +36,7 @@ def get_data(currency_shortcut):
     if response.status_code == 200:
         data = json.loads(json.dumps(response.json()))
         exchange_rates = data.get("conversion_rates", {})
-        transformed_exchange_rates = [{'currency': k, 'rate': v, 'date': datetime.today().strftime('%Y-%m-%d')} for k, v in exchange_rates.items()]
+        transformed_exchange_rates = [{'date': datetime.today().strftime('%Y-%m-%d'), 'currency': k, 'rate': v} for k, v in exchange_rates.items()]
         return transformed_exchange_rates
     
     elif response.status_code == 404:
@@ -52,13 +52,13 @@ def load_data_to_db(exchange_rates,currency_shortcut):
     cursor = sqliteConnection.cursor()
 
     # Create table
-    sql_create = f'CREATE TABLE IF NOT EXISTS "{currency_shortcut}" (id INTEGER PRIMARY KEY, currency TEXT UNIQUE, rate REAL, date TEXT)'
+    sql_create = f'CREATE TABLE IF NOT EXISTS "{currency_shortcut}" (id INTEGER PRIMARY KEY, date TEXT, currency TEXT, rate REAL, UNIQUE(date,currency))'
     cursor.execute(sql_create)
 
     # Load the data to DB
     for row in exchange_rates:
-        sql_insert = f'INSERT INTO "{currency_shortcut}" (currency, rate, date) VALUES (?, ?, ?) ON CONFLICT(currency) DO UPDATE SET rate = excluded.rate'
-        sql_data = (row['currency'], row['rate'], row['date'])
+        sql_insert = f'INSERT INTO "{currency_shortcut}" (date, currency, rate) VALUES (?, ?, ?) ON CONFLICT(date, currency) DO UPDATE SET rate = excluded.rate'
+        sql_data = (row['date'], row['currency'], row['rate'])
         cursor.execute(sql_insert,sql_data)
 
     # Commit and close
