@@ -1,5 +1,4 @@
 import requests
-import csv
 import json
 import os
 import sqlite3
@@ -16,7 +15,7 @@ def main():
     transformed_exchange_rates = get_data(currency_shortcut)
     load_data_to_db(transformed_exchange_rates,currency_shortcut)
 
-
+# Function to get currency from user
 def get_currency():
     while True:
         try:
@@ -45,7 +44,7 @@ def get_data(currency_shortcut):
     else:
         sys.exit(f"Request failed with status code {response.status_code}")
 
-
+# Func to load data to DB
 def load_data_to_db(exchange_rates,currency_shortcut):
     # Connect to database
     sqliteConnection = sqlite3.connect('rates.db')
