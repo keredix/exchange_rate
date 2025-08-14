@@ -9,7 +9,7 @@ DB_FILE = "rates.db"
 def get_rates():
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
-    cursor.execute(f'SELECT date, currency, rate FROM rates ORDER BY date DESC')
+    cursor.execute(f'SELECT date, currency, rate FROM rates ORDER BY date ASC')
     rows = cursor.fetchall()
     conn.close()
 
