@@ -21,7 +21,7 @@ def get_data():
     
     data = json.loads(json.dumps(response.json()))
     exchange_rates = data.get("conversion_rates", {})
-    transformed_exchange_rates = [{'date': "2025-08-13", 'currency': k, 'rate': v} for k, v in exchange_rates.items()]
+    transformed_exchange_rates = [{'date': datetime.today().strftime('%Y-%m-%d'), 'currency': k, 'rate': v} for k, v in exchange_rates.items()]
     return transformed_exchange_rates
 
 # Init database
